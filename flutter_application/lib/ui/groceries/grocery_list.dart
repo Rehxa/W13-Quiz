@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../../data/mock_grocery_repository.dart';
 import '../../models/grocery.dart';
 import 'grocery_form.dart';
+import 'grocery_search.dart';
+
+enum ScreenType { list, search }
 
 class GroceryList extends StatefulWidget {
   const GroceryList({super.key});
@@ -11,6 +14,7 @@ class GroceryList extends StatefulWidget {
 }
 
 class _GroceryListState extends State<GroceryList> {
+  ScreenType currentScreen = ScreenType.list;
 
   void onCreate() async {
     // Navigate to the form screen using the Navigator push
@@ -43,7 +47,27 @@ class _GroceryListState extends State<GroceryList> {
         title: const Text('Your Groceries'),
         actions: [IconButton(onPressed: onCreate, icon: const Icon(Icons.add))],
       ),
-      body: content,
+      body: IndexedStack(
+        index: currentScreen.index,
+        children: [content, GrocerySearch()],
+      ),
+      // body: content,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentScreen.index,
+        selectedItemColor: Colors.blue,
+        onTap: (value) {
+          setState(() {
+            currentScreen = ScreenType.values[value];
+          });
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.local_grocery_store),
+            label: "Groceries",
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
+        ],
+      ),
     );
   }
 }
